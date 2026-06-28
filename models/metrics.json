@@ -1,18 +1,18 @@
 {
-  "dataset": "tinyshakespeare",
-  "tokenizer_type": "char",
-  "num_params": 3208960,
-  "step": 999,
-  "tokens_seen": 4091904,
-  "train_loss": 1.9531879425048828,
-  "val_loss": 2.031393527984619,
-  "val_perplexity": 7.624704197607763,
+  "dataset": "tinystories",
+  "tokenizer_type": "bpe",
+  "num_params": 13891584,
+  "step": 29000,
+  "tokens_seen": 237568000,
+  "train_loss": 1.643928050994873,
+  "val_loss": 1.6706236600875854,
+  "val_perplexity": 5.315481817518516,
   "model_config": {
-    "vocab_size": 65,
-    "block_size": 128,
-    "n_layer": 4,
-    "n_head": 4,
-    "d_model": 256,
+    "vocab_size": 8192,
+    "block_size": 256,
+    "n_layer": 6,
+    "n_head": 6,
+    "d_model": 384,
     "dropout": 0.1
   }
 }

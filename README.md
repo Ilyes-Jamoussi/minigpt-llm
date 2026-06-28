@@ -70,22 +70,25 @@ Run on a GPU via the Colab notebook (~5–9 hours for the committed model on a T
 
 ## Results
 
-Committed BPE model (TinyStories, 30,000 training steps, Colab T4 GPU):
+Committed BPE model (TinyStories, 30,000 training steps, Kaggle T4 GPU):
 
 | Metric | Value |
 | --- | --- |
-| Parameters | ~13,900,000 |
+| Parameters | 13,891,584 |
 | Tokenizer | byte-level BPE, vocab 8192 |
 | Dataset | TinyStories (~150M characters) |
 | Validation perplexity | **5.32** |
-| Tokens seen | **~246,000,000** |
+| Tokens seen | **237,568,000** |
+| Best checkpoint step | 29,000 |
 
 Sample generation (`temperature=0.8, top_k=50, top_p=0.95`, prompt `Once upon a time`):
 
 ```
-Once upon a time, there was a little girl named Lily. She loved to play with her toys and her
-best friend, a teddy bear named Tim. One day, Lily and Tim went to the park. They saw a big,
-shiny slide. Lily wanted to go on the slide, but Tim was scared.
+Once upon a time, there was a little girl named Lily. She loved to play outside in the park.
+One day, she saw a big, juicy apple on a tree. She picked it up and ate it all up.
+
+Suddenly, a boy came and said, "I found a apple! Can I have it, please?" Lily was scared of
+the boy because he didn't want to share his apple. But the boy didn't give up...
 ```
 
 The model produces coherent short-story English after training on TinyStories with BPE tokenization.
