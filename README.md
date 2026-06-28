@@ -152,15 +152,33 @@ streamlit run app.py          # live streaming demo (same as deployed app)
 uvicorn api.main:app          # FastAPI + browser demo at http://localhost:8000/
 ```
 
-### Train the BPE model (recommended)
+### Train on Kaggle (recommended if Colab GPU quota is exhausted)
 
-On Google Colab (GPU):
+Kaggle offers free GPU hours and supports **unattended training** via **Save & Run All (Commit)** —
+the notebook runs in the cloud even if you close the browser. Artifacts are written to
+`/kaggle/working/minigpt-artifacts/` and appear in the notebook **Output** tab.
+
+1. Create a free [Kaggle](https://www.kaggle.com) account (phone verification required).
+2. **New Notebook** → upload `notebooks/train_minigpt_kaggle.ipynb` from this repo
+   (or copy the cells).
+3. Notebook settings (right panel): **Accelerator → GPU T4 x2**, **Internet → On**.
+4. Run the **Setup** cell once — confirm `cuda available: True`.
+5. **Save Version → Save & Run All (Commit)** — training runs alone (~5–9 h).
+6. When the commit status is **Complete**, open **Output** → download `minigpt-artifacts/`
+   (four files).
+7. Install locally:
+
+```bash
+bash scripts/install_colab_weights.sh ~/Downloads/minigpt-artifacts
+```
+
+### Train on Google Colab
 
 1. Open `notebooks/train_minigpt.ipynb` in [Google Colab](https://colab.research.google.com).
 2. Set the runtime to GPU (Runtime → Change runtime type → GPU).
 3. Run all cells — the notebook downloads TinyStories, trains the BPE tokenizer and model,
    and writes artifacts to `models/`.
-4. Download the four files from `models/` and replace the committed artifacts.
+4. Download the four files from `models/` **immediately** before the session ends.
 
 ### Install Colab weights
 
