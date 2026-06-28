@@ -10,9 +10,7 @@ through a **typed, tested FastAPI service** that **streams tokens live** to a we
 No `nn.Transformer`, no HuggingFace `transformers` for the model. The attention, causal
 masking, byte-level BPE tokenizer, and sampling are all implemented here.
 
-> **Live demo:** deploy on [Streamlit Community Cloud](https://share.streamlit.io/) (see
-> [Deployment](#deployment)) — repo `Ilyes-Jamoussi/minigpt-llm`, entrypoint `app.py`.
-> Same setup as [MailGuard AI](https://mailguard-ai.streamlit.app).
+### [Live Demo](https://minigpt-llm.streamlit.app)
 
 ![MiniGPT streaming demo](docs/demo.png)
 
@@ -135,14 +133,9 @@ The natural next step is the TinyStories BPE run in the Colab notebook.
 
 ## Deployment
 
-Deploy on **[Streamlit Community Cloud](https://share.streamlit.io/)** (same as MailGuard AI):
-
-1. Sign in with GitHub at [share.streamlit.io](https://share.streamlit.io/).
-2. Click **Create app** → pick repository **`Ilyes-Jamoussi/minigpt-llm`**, branch **`main`**, main file **`app.py`**.
-3. Click **Deploy** (first build takes a few minutes — PyTorch + Git LFS weights).
-4. Copy your app URL (often `https://minigpt-llm.streamlit.app`) and add it at the top of this README.
-
-The app is **public by default** once deployed. Any push to `main` triggers an automatic redeployment.
+The app is deployed on [Streamlit Community Cloud](https://streamlit.io/cloud), connected
+directly to this GitHub repository. Model weights are stored via Git LFS. Any push to
+`main` triggers an automatic redeployment.
 
 The repo also ships a minimal CPU `Dockerfile` for self-hosting the FastAPI service + demo:
 
