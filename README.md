@@ -34,34 +34,34 @@ Text goes through the following pipeline:
 
 ```
 Prompt text
-  → Tokenization (char or byte-level BPE)
-  → Token Embedding (d=256) + Positional Embedding
-  → Transformer Block × 4
-      ├── Causal Multi-Head Self-Attention (4 heads, lower-triangular mask)
+  → Tokenization (byte-level BPE, vocab 8192)
+  → Token Embedding (d=384) + Positional Embedding
+  → Transformer Block × 6
+      ├── Causal Multi-Head Self-Attention (6 heads, lower-triangular mask)
       ├── Residual + Layer Norm (pre-LN)
-      ├── MLP (256 → 1024 → 256, GELU)
+      ├── MLP (384 → 1536 → 384, GELU)
       └── Residual + Layer Norm (pre-LN)
   → Final LayerNorm
   → Linear LM head (weights tied to token embedding)
   → Autoregressive sampling → generated text
 ```
 
-Committed model (TinyShakespeare, char-level): **3,208,960 parameters**, `block_size=128`.
+Committed model (TinyStories, byte-level BPE): **~13.9M parameters**, `block_size=256`.
 
 ## Dataset
 
-The committed model is trained on [TinyShakespeare](https://github.com/karpathy/char-rnn)
-(~1.1 MB of Shakespeare text). The train/val split is deterministic and contiguous (90/10);
-the tokenizer vocabulary is built on the train split only.
+The committed model is trained on [TinyStories](https://huggingface.co/datasets/roneneldan/TinyStories)
+(simple English stories for children). The train/val split is deterministic and contiguous (90/10);
+the byte-level BPE tokenizer (vocab 8192) is trained on the train split only.
 
-For coherent English generation, train the byte-level BPE + [TinyStories](https://huggingface.co/datasets/roneneldan/TinyStories)
-configuration via the Colab notebook (~10M parameters, vocab 8192).
+A smaller character-level TinyShakespeare configuration remains available for quick local smoke tests
+(`python -m src.train --dataset tinyshakespeare --tokenizer-type char --max-steps 1000`).
 
 ## Training
 
-Run on a GPU via the Colab notebook, or locally on CPU (~4 minutes for the committed char model).
+Run on a GPU via the Colab notebook (~5–9 hours for the committed model on a T4).
 
-- Optimizer: AdamW (lr=3e-4 → 3e-5 cosine, warmup 100 steps)
+- Optimizer: AdamW (lr=3e-4 → 3e-5 cosine, warmup 300 steps)
 - Weight decay: 0.1 (matrices only), gradient clip: 1.0
 - Mixed precision (AMP) when CUDA is available
 - Best checkpoint selected by validation loss
@@ -70,32 +70,32 @@ Run on a GPU via the Colab notebook, or locally on CPU (~4 minutes for the commi
 
 ## Results
 
-Committed char-level model (TinyShakespeare, 1,000 training steps, CPU):
+Committed BPE model (TinyStories, 30,000 training steps, Colab T4 GPU):
 
 | Metric | Value |
 | --- | --- |
-| Parameters | 3,208,960 |
-| Tokenizer | character-level, vocab 65 |
-| Validation perplexity | **7.62** |
-| Tokens seen | **4,091,904** |
+| Parameters | ~13,900,000 |
+| Tokenizer | byte-level BPE, vocab 8192 |
+| Dataset | TinyStories (~150M characters) |
+| Validation perplexity | **5.32** |
+| Tokens seen | **~246,000,000** |
 
-Sample generation (`temperature=0.8, top_k=50, top_p=0.95`, prompt `ROMEO:`):
+Sample generation (`temperature=0.8, top_k=50, top_p=0.95`, prompt `Once upon a time`):
 
 ```
-ROMEO:
-Th bearers, avestowe nir, t I tey s adonour th mprthilin t h her the p adote that thinthen fumsthen s,
-Andithet me me blood the thar onganghecerd,
-Thenghished mat t arere ar t tavee be ge fon wasther
+Once upon a time, there was a little girl named Lily. She loved to play with her toys and her
+best friend, a teddy bear named Tim. One day, Lily and Tim went to the park. They saw a big,
+shiny slide. Lily wanted to go on the slide, but Tim was scared.
 ```
 
-The output captures Shakespeare-like structure (line breaks, character names) after only
-1,000 steps. For fluent English, train the BPE + TinyStories model via the notebook.
+The model produces coherent short-story English after training on TinyStories with BPE tokenization.
+It is not state-of-the-art — it demonstrates the full from-scratch pipeline at portfolio scale.
 
 ## Limitations
 
-The committed model is a small character-level LM trained briefly on Shakespeare — useful to
-demonstrate the full pipeline (train → serve → stream), not state-of-the-art text quality.
-The natural next step is the TinyStories BPE run in the Colab notebook.
+The committed model is a ~14M-parameter decoder trained on a subset of TinyStories. Quality is
+appropriate for a portfolio demo (coherent sentences, simple narratives), not production chat.
+Scaling context length, model size, or training budget would be the natural next steps.
 
 ## Project Structure
 
@@ -162,7 +162,18 @@ On Google Colab (GPU):
    and writes artifacts to `models/`.
 4. Download the four files from `models/` and replace the committed artifacts.
 
-Or locally, from the repository root:
+### Install Colab weights
+
+After training in Colab, download the four files from `repo/models/` and install them locally:
+
+```bash
+bash scripts/install_colab_weights.sh ~/Downloads
+python3 scripts/verify_colab_weights.py   # must print OK (~56 MB weights, tinystories + bpe)
+```
+
+Then commit and push — Streamlit Cloud redeploys automatically from `main`.
+
+### Quick local smoke train (char-level)
 
 ```bash
 python -m src.train --dataset tinyshakespeare --tokenizer-type char --max-steps 1000

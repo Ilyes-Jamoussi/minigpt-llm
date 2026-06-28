@@ -17,9 +17,9 @@ STYLES_PATH = PROJECT_ROOT / "assets" / "styles.css"
 DEFAULTS = GenerationConfig()
 
 EXAMPLES: dict[str, str] = {
-    "Shakespeare (ROMEO:)": "ROMEO:",
     "Story opening": "Once upon a time",
-    "Blank verse": "\nTo be, or not to be:",
+    "Little robot": "The little robot",
+    "Lily and Tom": "Lily and Tom went to",
 }
 
 
@@ -77,7 +77,7 @@ def _render_sidebar(metrics: dict[str, object]) -> None:
         unsafe_allow_html=True,
     )
     st.sidebar.markdown("")
-    st.sidebar.caption(f"Trained on {dataset} · char-level demo model")
+    st.sidebar.caption(f"Trained on {dataset} · {tokenizer_type} tokenizer")
 
 
 def main() -> None:
