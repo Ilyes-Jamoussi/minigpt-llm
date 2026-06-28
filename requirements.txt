@@ -1,0 +1,13 @@
+# Pinned runtime lock for serving the API (used by the Dockerfile and deployment
+# platforms). Abstract dependency declarations live in pyproject.toml; dev and
+# training tools are NOT included here to keep the serving image small.
+#
+# For a small CPU-only image/CI, install torch from the CPU wheel index:
+#   pip install torch==2.12.1 --index-url https://download.pytorch.org/whl/cpu
+#   pip install -r requirements.txt
+torch==2.12.1
+numpy==2.5.0
+safetensors==0.8.0
+fastapi==0.138.1
+uvicorn[standard]==0.49.0
+pydantic==2.13.4

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MiniGPT - live text generation</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="header">
+        <h1>MiniGPT</h1>
+        <p class="tagline">A GPT-style language model, built from scratch in PyTorch and streamed token by token.</p>
+      </header>
+
+      <form id="generate-form" class="card">
+        <label class="field" for="prompt">Prompt</label>
+        <textarea id="prompt" name="prompt" rows="3" required>Once upon a time</textarea>
+
+        <div class="controls">
+          <div class="control">
+            <label for="max_new_tokens">Max new tokens: <output id="max_new_tokens_value">200</output></label>
+            <input type="range" id="max_new_tokens" min="1" max="1024" value="200" />
+          </div>
+          <div class="control">
+            <label for="temperature">Temperature: <output id="temperature_value">0.8</output></label>
+            <input type="range" id="temperature" min="0" max="2" step="0.05" value="0.8" />
+          </div>
+          <div class="control">
+            <label for="top_k">Top-k (0 = off): <output id="top_k_value">50</output></label>
+            <input type="range" id="top_k" min="0" max="200" value="50" />
+          </div>
+          <div class="control">
+            <label for="top_p">Top-p: <output id="top_p_value">0.95</output></label>
+            <input type="range" id="top_p" min="0" max="1" step="0.01" value="0.95" />
+          </div>
+        </div>
+
+        <button id="generate-button" type="submit">Generate</button>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+      </form>
+
+      <section class="output-panel" aria-label="Generated text">
+        <pre id="output" class="output" aria-live="polite"></pre>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

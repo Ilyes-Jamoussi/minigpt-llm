@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+*.py[cod]
+*.so
+.Python
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Data (downloaded at runtime from public URLs)
+data/
+
+# Tooling caches
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Logs
+*.log
+
+# Local-only planning notes (not part of the public repo)
+CONVENTIONS.md
+PROJECT_SPEC.md
+START_HERE.md

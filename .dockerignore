@@ -1,0 +1,14 @@
+.git/
+.github/
+.venv/
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+data/
+tests/
+notebooks/
+*.md
+!README.md
+models/*.safetensors.dvc

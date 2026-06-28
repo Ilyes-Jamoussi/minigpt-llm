@@ -1,0 +1,8 @@
+-r requirements.txt
+ruff==0.15.20
+mypy==2.1.0
+pytest==9.1.1
+pre-commit==4.6.0
+httpx==0.28.1
+datasets==5.0.0
+tqdm==4.68.3
