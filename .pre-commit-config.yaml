@@ -9,5 +9,5 @@ repos:
     rev: v2.1.0
     hooks:
       - id: mypy
-        files: ^(src|api)/
+        files: ^(src|api/app\.py|app\.py)
         additional_dependencies: []

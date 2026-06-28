@@ -31,7 +31,7 @@ jobs:
         run: ruff check .
 
       - name: Mypy
-        run: mypy src api
+        run: mypy src api app.py
 
       - name: Pytest
         run: pytest

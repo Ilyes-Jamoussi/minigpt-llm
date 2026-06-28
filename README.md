@@ -10,6 +10,8 @@ through a **typed, tested FastAPI service** that **streams tokens live** to a we
 No `nn.Transformer`, no HuggingFace `transformers` for the model. The attention, causal
 masking, byte-level BPE tokenizer, and sampling are all implemented here.
 
+### [Live Demo](https://minigpt-llm.streamlit.app)
+
 ![MiniGPT streaming demo](docs/demo.png)
 
 ## How It Works
@@ -98,8 +100,11 @@ The natural next step is the TinyStories BPE run in the Colab notebook.
 ## Project Structure
 
 ```
+├── app.py                     # Streamlit UI (rendering only)
+├── assets/
+│   └── styles.css             # UI styling (kept out of logic)
 ├── api/
-│   └── main.py                # FastAPI service (loads model once, SSE streaming)
+│   └── main.py                # FastAPI service (SSE streaming)
 ├── demo/
 │   ├── index.html             # Streaming web UI
 │   ├── app.js                 # fetch + SSE client
@@ -110,7 +115,8 @@ The natural next step is the TinyStories BPE run in the Colab notebook.
 │   ├── model.py               # GPT decoder-only model (from scratch)
 │   ├── data.py                # Dataset download, split, batching
 │   ├── train.py               # Training loop, checkpointing, evaluation
-│   └── generate.py            # Sampling utils + CLI
+│   ├── generate.py            # Sampling utils + CLI
+│   └── inference.py           # Model loading + streaming (used by Streamlit)
 ├── models/
 │   ├── model.safetensors      # Trained weights (Git LFS)
 │   ├── config.json            # Model hyperparameters
@@ -127,21 +133,23 @@ The natural next step is the TinyStories BPE run in the Colab notebook.
 
 ## Deployment
 
-The repo ships a minimal CPU `Dockerfile` that serves both the API and the demo:
+The app is deployed on [Streamlit Community Cloud](https://streamlit.io/cloud), connected
+directly to this GitHub repository. Model weights are stored via Git LFS. Any push to
+`main` triggers an automatic redeployment.
+
+The repo also ships a minimal CPU `Dockerfile` for self-hosting the FastAPI service + demo:
 
 ```bash
 docker build -t minigpt .
 docker run -p 8000:8000 minigpt
 ```
 
-It honors `$PORT`, so it deploys as-is to **Hugging Face Spaces (Docker SDK)**, **Render**, or
-**Fly.io**.
-
 ### Run locally
 
 ```bash
 pip install -r requirements.txt
-uvicorn api.main:app        # open http://localhost:8000/ for the demo
+streamlit run app.py          # live streaming demo (same as deployed app)
+uvicorn api.main:app          # FastAPI + browser demo at http://localhost:8000/
 ```
 
 ### Train the BPE model (recommended)
