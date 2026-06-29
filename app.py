@@ -6,8 +6,6 @@ This module only renders the UI; model loading and generation live in
 
 from __future__ import annotations
 
-from collections.abc import Iterator
-
 import streamlit as st
 
 from src.artifacts import ensure_model_artifacts
@@ -122,26 +120,22 @@ def main() -> None:
     if st.button("Generate", type="primary", disabled=not prompt.strip()):
         st.markdown("**Generated text**")
         output = st.empty()
-        full_text = prompt
+        generated_text = ""
 
-        def _stream() -> Iterator[str]:
-            nonlocal full_text
-            for chunk in stream_completion(
-                loaded,
-                prompt,
-                max_new_tokens,
-                temperature,
-                top_k if top_k > 0 else None,
-                top_p,
-            ):
-                full_text += chunk
-                output.markdown(
-                    f'<div class="output-box">{full_text}</div>',
-                    unsafe_allow_html=True,
-                )
-                yield chunk
-
-        st.write_stream(_stream)
+        for chunk in stream_completion(
+            loaded,
+            prompt,
+            max_new_tokens,
+            temperature,
+            top_k if top_k > 0 else None,
+            top_p,
+        ):
+            generated_text += chunk
+            display = f"{prompt}{generated_text}"
+            output.markdown(
+                f'<div class="output-box">{display}</div>',
+                unsafe_allow_html=True,
+            )
 
 
 if __name__ == "__main__":
