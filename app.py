@@ -10,7 +10,8 @@ from collections.abc import Iterator
 
 import streamlit as st
 
-from src.config import PROJECT_ROOT, GenerationConfig
+from src.artifacts import ensure_model_artifacts
+from src.config import MODELS_DIR, PROJECT_ROOT, GenerationConfig
 from src.inference import LoadedModel, load_for_inference, load_metrics, stream_completion
 
 STYLES_PATH = PROJECT_ROOT / "assets" / "styles.css"
@@ -24,9 +25,15 @@ EXAMPLES: dict[str, str] = {
 
 
 @st.cache_resource
-def get_model() -> LoadedModel:
+def get_model(_artifact_key: str) -> LoadedModel:
     """Load the trained model once and cache it across reruns."""
     return load_for_inference()
+
+
+def _artifact_cache_key(metrics: dict[str, object]) -> str:
+    step = metrics.get("step", 0)
+    num_params = metrics.get("num_params", 0)
+    return f"{num_params}-{step}"
 
 
 def _metric_float(metrics: dict[str, object], key: str, default: float = 0.0) -> float:
@@ -39,7 +46,6 @@ def _metric_int(metrics: dict[str, object], key: str, default: int = 0) -> int:
     return int(value) if isinstance(value, (int, float)) else default
 
 
-@st.cache_data
 def get_metrics() -> dict[str, object]:
     return load_metrics()
 
@@ -83,8 +89,10 @@ def _render_sidebar(metrics: dict[str, object]) -> None:
 def main() -> None:
     st.set_page_config(page_title="MiniGPT", page_icon="🧠", layout="centered")
     _inject_css()
+    if ensure_model_artifacts(MODELS_DIR):
+        get_model.clear()
     metrics = get_metrics()
-    loaded = get_model()
+    loaded = get_model(_artifact_cache_key(metrics))
 
     st.markdown('<div class="main-title">MiniGPT</div>', unsafe_allow_html=True)
     st.markdown(
