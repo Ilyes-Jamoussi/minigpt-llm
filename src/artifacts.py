@@ -23,17 +23,19 @@ from src.config import (
 
 logger = logging.getLogger(__name__)
 
-_GITHUB_MEDIA_BASE = (
-    "https://media.githubusercontent.com/media/Ilyes-Jamoussi/minigpt-llm/main/models"
+_GITHUB_RAW_BASE = "https://raw.githubusercontent.com/Ilyes-Jamoussi/minigpt-llm/main/models"
+_GITHUB_MEDIA_WEIGHTS = (
+    "https://media.githubusercontent.com/media/Ilyes-Jamoussi/minigpt-llm/main/models/"
+    + WEIGHTS_FILENAME
 )
+_ARTIFACT_URLS = {
+    WEIGHTS_FILENAME: _GITHUB_MEDIA_WEIGHTS,
+    MODEL_CONFIG_FILENAME: f"{_GITHUB_RAW_BASE}/{MODEL_CONFIG_FILENAME}",
+    TOKENIZER_FILENAME: f"{_GITHUB_RAW_BASE}/{TOKENIZER_FILENAME}",
+    METRICS_FILENAME: f"{_GITHUB_RAW_BASE}/{METRICS_FILENAME}",
+}
 _MIN_WEIGHTS_BYTES = 40_000_000
 _LFS_POINTER_PREFIX = b"version https://git-lfs.github.com/spec/v1"
-_ARTIFACT_FILES = (
-    WEIGHTS_FILENAME,
-    MODEL_CONFIG_FILENAME,
-    TOKENIZER_FILENAME,
-    METRICS_FILENAME,
-)
 
 
 def _is_lfs_pointer(path: Path) -> bool:
@@ -84,8 +86,7 @@ def ensure_model_artifacts(models_dir: Path = MODELS_DIR) -> bool:
     if not _should_bootstrap(models_dir):
         return False
 
-    for name in _ARTIFACT_FILES:
-        url = f"{_GITHUB_MEDIA_BASE}/{name}"
+    for name, url in _ARTIFACT_URLS.items():
         _download_file(url, models_dir / name)
 
     if not artifacts_ready(models_dir):
